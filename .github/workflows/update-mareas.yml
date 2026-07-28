@@ -1,0 +1,41 @@
+name: Actualizar mareas de Chipiona
+
+# Se ejecuta 1 vez al mes (día 1 a las 05:00 UTC) + se puede lanzar a mano
+# desde la pestaña "Actions" del repo cuando quieras.
+# Cada ejecución tarda unos segundos: en un repo público no consume minutos
+# de GitHub Actions (son gratis e ilimitados para repos públicos).
+on:
+  schedule:
+    - cron: '0 5 1 * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar dependencias
+        run: pip install requests
+
+      - name: Ejecutar scraper
+        run: python scraper.py
+
+      - name: Guardar cambios si los hay
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/mareas.json
+          if git diff --cached --quiet; then
+            echo "Sin cambios este mes."
+          else
+            git commit -m "Actualiza datos de mareas ($(date -u +%Y-%m))"
+            git push
+          fi
