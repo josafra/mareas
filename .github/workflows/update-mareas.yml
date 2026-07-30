@@ -1,12 +1,14 @@
 name: Actualizar mareas de Chipiona
 
-# Se ejecuta 1 vez al mes (día 1 a las 05:00 UTC) + se puede lanzar a mano
+# Se ejecuta los días 1 al 5 de cada mes (05:00 UTC) + se puede lanzar a mano
 # desde la pestaña "Actions" del repo cuando quieras.
-# Cada ejecución tarda unos segundos: en un repo público no consume minutos
-# de GitHub Actions (son gratis e ilimitados para repos públicos).
+# Varios días de margen por si la web fuente tarda en publicar el mes nuevo:
+# en cuanto uno de esos días lo consigue, los siguientes no encuentran cambios
+# y no hacen nada. Cada ejecución tarda unos segundos: en un repo público no
+# consume minutos de GitHub Actions (son gratis e ilimitados para repos públicos).
 on:
   schedule:
-    - cron: '0 5 1 * *'
+    - cron: '0 5 1-5 * *'
   workflow_dispatch: {}
 
 permissions:
